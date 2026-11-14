@@ -4,6 +4,11 @@ Projeto dbt para o teste técnico de Engenharia de Dados do Clube do Valor.
 
 Os dados são de uma corretora fictícia: um CSV de transações (compras e vendas de ativos) e um CSV de clientes. O projeto carrega os dois arquivos como seeds, limpa e tipa os dados, e entrega uma tabela fato de transações, uma dimensão de clientes e a carteira de cada cliente por ativo. O banco é DuckDB, um arquivo local: não precisa de servidor nem de credencial.
 
+## Vídeo explicativo
+
+https://youtu.be/QwFSQle0Mmg
+
+
 ## Requisitos
 
 - Git
