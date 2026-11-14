@@ -1,0 +1,8 @@
+cdv_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "C:/tmp/cdv.duckdb"
+      threads: 1
+      schema: main

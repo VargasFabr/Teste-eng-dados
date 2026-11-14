@@ -1,0 +1,8 @@
+{{ config(severity='warn') }}
+
+select
+    client_id,
+    asset_ticker,
+    net_quantity
+from {{ ref('mart_client_portfolio') }}
+where net_quantity < 0

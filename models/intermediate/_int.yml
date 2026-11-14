@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: int_transactions
+    description: Transação válida com cliente cadastrado e com o sinal de compra ou venda.
+    columns:
+      - name: transaction_id
+        description: Identificador da transação na corretora.
+        data_tests:
+          - unique
+          - not_null
+      - name: client_id
+        description: Cliente da operação, presente na dimensão de clientes.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_clients')
+                field: client_id
+      - name: asset_ticker
+        description: Código do ativo negociado.
+        data_tests:
+          - not_null
+      - name: operation
+        description: Lado da operação. BUY compra, SELL vende.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["BUY", "SELL"]
+      - name: quantity
+        description: Quantidade de papéis, sempre positiva.
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: Preço unitário do papel na operação.
+        data_tests:
+          - not_null
+      - name: gross_amount
+        description: Valor financeiro da operação, sem sinal.
+        data_tests:
+          - not_null
+      - name: signed_quantity
+        description: Quantidade com sinal. Compra positiva, venda negativa.
+        data_tests:
+          - not_null
+      - name: signed_amount
+        description: Valor financeiro com sinal. Compra positiva, venda negativa.
+        data_tests:
+          - not_null
+      - name: transaction_date
+        description: Data em que a operação foi executada.
+        data_tests:
+          - not_null

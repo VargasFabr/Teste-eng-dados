@@ -1,0 +1,9 @@
+.venv/
+target/
+dbt_packages/
+logs/
+*.duckdb
+.user.yml
+MANUAL.md
+Teste Técnico_Engenheiro-Dados-CDV.html
+consultas.ipynb

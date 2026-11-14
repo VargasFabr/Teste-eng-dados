@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: stg_transactions
+    description: Uma transação válida, tipada, sem duplicata de conteúdo.
+    columns:
+      - name: transaction_id
+        description: Identificador da transação na corretora.
+        data_tests:
+          - unique
+          - not_null
+      - name: client_id
+        description: Cliente que negociou. Linha sem cliente não entra.
+        data_tests:
+          - not_null
+      - name: asset_ticker
+        description: Código do ativo negociado.
+        data_tests:
+          - not_null
+      - name: operation
+        description: Lado da operação. BUY compra, SELL vende.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["BUY", "SELL"]
+      - name: quantity
+        description: Quantidade de papéis, sempre positiva depois do filtro.
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: Preço unitário do papel na operação.
+        data_tests:
+          - not_null
+      - name: gross_amount
+        description: Valor financeiro da operação, quantity vezes unit_price.
+        data_tests:
+          - not_null
+      - name: transaction_date
+        description: Data em que a operação foi executada.
+        data_tests:
+          - not_null
+
+  - name: stg_clients
+    description: Um cliente por client_id. Cópias incompletas do cadastro são descartadas.
+    columns:
+      - name: client_id
+        description: Identificador do cliente na corretora.
+        data_tests:
+          - unique
+          - not_null
+      - name: client_name
+        description: Nome do cliente, vindo da coluna name do cadastro.
+        data_tests:
+          - not_null
+      - name: city
+        description: Cidade do cliente. Pode ficar vazia se o cadastro não trouxer.
+      - name: state
+        description: Unidade federativa do cliente.
+        data_tests:
+          - not_null
+      - name: created_at
+        description: Data de abertura do cadastro.
+        data_tests:
+          - not_null

@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: fact_transactions
+    description: Fato de transações no grão da operação. Carga incremental pela data.
+    columns:
+      - name: transaction_id
+        description: Identificador da transação. Chave da carga incremental.
+        data_tests:
+          - unique
+          - not_null
+      - name: client_id
+        description: Cliente da operação.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_clients')
+                field: client_id
+      - name: asset_ticker
+        description: Código do ativo negociado.
+        data_tests:
+          - not_null
+      - name: operation
+        description: Lado da operação. BUY compra, SELL vende.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["BUY", "SELL"]
+      - name: quantity
+        description: Quantidade de papéis, sempre positiva.
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: Preço unitário do papel na operação.
+        data_tests:
+          - not_null
+      - name: gross_amount
+        description: Valor financeiro da operação, sem sinal.
+        data_tests:
+          - not_null
+      - name: signed_quantity
+        description: Quantidade com sinal. Compra positiva, venda negativa.
+        data_tests:
+          - not_null
+      - name: signed_amount
+        description: Valor financeiro com sinal. Compra positiva, venda negativa.
+        data_tests:
+          - not_null
+      - name: transaction_date
+        description: Data da operação. Controle da carga incremental.
+        data_tests:
+          - not_null
+
+  - name: dim_clients
+    description: Dimensão de clientes, uma linha por cliente, inclusive quem não negociou.
+    columns:
+      - name: client_id
+        description: Identificador do cliente na corretora.
+        data_tests:
+          - unique
+          - not_null
+      - name: client_name
+        description: Nome do cliente.
+        data_tests:
+          - not_null
+      - name: city
+        description: Cidade do cliente.
+      - name: state
+        description: Unidade federativa do cliente.
+        data_tests:
+          - not_null
+      - name: created_at
+        description: Data de abertura do cadastro.
+        data_tests:
+          - not_null
+
+  - name: mart_client_portfolio
+    description: Posição líquida de cada cliente em cada ativo. Compra menos venda, em quantidade e em valor negociado.
+    columns:
+      - name: client_id
+        description: Cliente da posição.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_clients')
+                field: client_id
+      - name: asset_ticker
+        description: Ativo da posição.
+        data_tests:
+          - not_null
+      - name: buy_quantity
+        description: Soma das quantidades compradas.
+        data_tests:
+          - not_null
+      - name: sell_quantity
+        description: Soma das quantidades vendidas.
+        data_tests:
+          - not_null
+      - name: buy_amount
+        description: Soma do financeiro comprado, quantity vezes unit_price.
+        data_tests:
+          - not_null
+      - name: sell_amount
+        description: Soma do financeiro vendido, quantity vezes unit_price.
+        data_tests:
+          - not_null
+      - name: net_quantity
+        description: Posição líquida em quantidade, compras menos vendas.
+        data_tests:
+          - not_null
+      - name: net_amount
+        description: Posição líquida em valor negociado, compras menos vendas.
+        data_tests:
+          - not_null
