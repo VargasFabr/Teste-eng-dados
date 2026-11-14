@@ -4,19 +4,29 @@ Projeto dbt de uma corretora fictícia. Os CSVs brutos entram como seeds e viram
 
 ## Como rodar
 
-Python 3.10 ou mais novo.
+Python 3.10 ou mais novo, já instalado. Na primeira vez, o script cria o `.venv` e instala o dbt. O git não executa isso no clone.
+
+Windows, na raiz do projeto:
 
 ```powershell
-py -3 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install dbt-duckdb
-mkdir C:\tmp -Force
-dbt seed --profiles-dir .
-dbt run --profiles-dir .
-dbt test --profiles-dir .
+. .\setup.ps1
+dbt seed
+dbt run
+dbt test
 ```
 
-O banco DuckDB fica em `C:/tmp/cdv.duckdb`. Crie a pasta `C:\tmp` se ela não existir. Os comandos acima precisam do `--profiles-dir .` porque o `profiles.yml` está na raiz do projeto.
+Se o PowerShell bloquear o script, rode antes, só nesta janela: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`.
+
+macOS ou Linux:
+
+```bash
+source setup.sh
+dbt seed
+dbt run
+dbt test
+```
+
+O banco DuckDB é o arquivo `cdv.duckdb` nesta pasta. O `.env` aponta o dbt para o `profiles.yml` do projeto, então os três comandos não levam flag.
 
 `dbt test` termina com exit code 0 e com um aviso em `assert_no_negative_position`. O aviso é intencional: algumas vendas válidas superam as compras daquele cliente naquele ativo, e a posição líquida fica negativa. O teste existe para mostrar essas linhas. Elas não são removidas da carteira. Os seeds também não são editados. Cliente sem cidade, quantidade negativa, cliente vazio e transação repetida são filtrados no staging.
 
@@ -25,8 +35,8 @@ O banco DuckDB fica em `C:/tmp/cdv.duckdb`. Crie a pasta `C:\tmp` se ela não ex
 `fact_transactions` carrega por `transaction_date`, com `unique_key` em `transaction_id` e estratégia `delete+insert`. Uma transação nova com data igual à máxima já carregada não entra no run seguinte, porque o filtro é `>`. Para reconstruir a fato depois de mudar a lógica:
 
 ```powershell
-dbt run --profiles-dir . --full-refresh --select fact_transactions
-dbt run --profiles-dir . --select fact_transactions
+dbt run --full-refresh --select fact_transactions
+dbt run --select fact_transactions
 ```
 
 A contagem de linhas fica igual nos dois runs.
